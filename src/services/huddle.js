@@ -28,18 +28,20 @@ export async function createHuddle({ name, password, home, profileName, userId }
   if (firebaseEnabled) {
     await set(ref(database, `huddles/${id}`), { name, home, members: { [userId]: member } })
   }
-  writeLocal({ huddle, userId, passwordHint: null })
+  const local = readLocal()
+  writeLocal({ ...local, huddle, huddles: { ...(local.huddles || {}), [id]: huddle }, userId, passwordHint: null })
   return huddle
 }
 
 export async function joinHuddle({ name, password, profileName, userId }) {
   const id = await digest(`${name}:${password}`)
   const local = readLocal()
-  if (!firebaseEnabled && (!local.huddle || local.huddle.id !== id)) throw new Error('Those Huddle details don\'t match.')
-  const huddle = local.huddle || { id, name, home: null, members: {} }
+  const storedHuddle = local.huddles?.[id] || (local.huddle?.id === id ? local.huddle : null)
+  if (!firebaseEnabled && !storedHuddle) throw new Error('Those Huddle details don\'t match.')
+  const huddle = storedHuddle || { id, name, home: null, members: {} }
   huddle.members[userId] = { name: profileName, latitude: null, longitude: null, sharingEnabled: false, updatedAt: null }
   if (firebaseEnabled) await update(ref(database, `huddles/${id}/members/${userId}`), huddle.members[userId])
-  writeLocal({ ...local, huddle, userId })
+  writeLocal({ ...local, huddle, huddles: { ...(local.huddles || {}), [id]: huddle }, userId })
   return huddle
 }
 
@@ -47,6 +49,7 @@ export function saveMemberLocation(huddleId, userId, location) {
   const local = readLocal()
   if (local.huddle?.id === huddleId) {
     local.huddle.members[userId] = { ...local.huddle.members[userId], ...location }
+    local.huddles = { ...(local.huddles || {}), [huddleId]: local.huddle }
     writeLocal(local)
   }
   if (firebaseEnabled) return update(ref(database, `huddles/${huddleId}/members/${userId}`), location)
@@ -54,7 +57,8 @@ export function saveMemberLocation(huddleId, userId, location) {
 
 export function subscribeToHuddle(huddleId, onChange) {
   if (!firebaseEnabled) {
-    onChange(readLocal().huddle || null)
+    const local = readLocal()
+    onChange(local.huddles?.[huddleId] || (local.huddle?.id === huddleId ? local.huddle : null))
     return () => {}
   }
   return onValue(ref(database, `huddles/${huddleId}`), (snapshot) => onChange(snapshot.val() ? { id: huddleId, ...snapshot.val() } : null))

@@ -1,5 +1,5 @@
 const CACHE = 'huddle-v1'
-const APP_SHELL = ['/', '/manifest.json', '/iconbg.jpg', '/huddlebg.jpg']
+const APP_SHELL = ['/', '/manifest.json', '/iconbg.jpg', '/huddleicon.jpg', '/huddlebg.jpg']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(APP_SHELL)))

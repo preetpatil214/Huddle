@@ -9,22 +9,27 @@ function markerIcon(kind) {
   return L.divIcon({ className: '', html: `<span class="${className}"></span>`, iconSize: [28, 28], iconAnchor: [14, 14] })
 }
 
-export default function MapView({ members = {}, home, currentUserId, currentLocation, onSelectHome }) {
+export default function MapView({ members = {}, home, currentUserId, currentLocation, focusLocation, onSelectHome }) {
   const mapElement = useRef(null)
   const map = useRef(null)
   const markers = useRef([])
+  const selectHome = useRef(onSelectHome)
+
+  useEffect(() => {
+    selectHome.current = onSelectHome
+  }, [onSelectHome])
 
   useEffect(() => {
     if (!mapElement.current || map.current) return
     map.current = L.map(mapElement.current, { zoomControl: false, attributionControl: false, minZoom: 2 }).setView(center, 2)
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map.current)
     L.control.zoom({ position: 'bottomright' }).addTo(map.current)
-    if (onSelectHome) map.current.on('click', (event) => onSelectHome({ latitude: event.latlng.lat, longitude: event.latlng.lng }))
+    if (onSelectHome) map.current.on('click', (event) => selectHome.current?.({ latitude: event.latlng.lat, longitude: event.latlng.lng }))
     return () => {
       map.current?.remove()
       map.current = null
     }
-  }, [onSelectHome])
+  }, [])
 
   useEffect(() => {
     if (!map.current) return
@@ -50,6 +55,10 @@ export default function MapView({ members = {}, home, currentUserId, currentLoca
   useEffect(() => {
     if (map.current && currentLocation) map.current.setView([currentLocation.latitude, currentLocation.longitude], 15, { animate: true })
   }, [currentLocation])
+
+  useEffect(() => {
+    if (map.current && focusLocation) map.current.setView([focusLocation.latitude, focusLocation.longitude], 15, { animate: true })
+  }, [focusLocation])
 
   return <div ref={mapElement} className="map" aria-label="Family map" />
 }
