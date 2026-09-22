@@ -8,6 +8,6 @@
   "theme_color": "#17181A",
   "orientation": "portrait-primary",
   "icons": [
-    { "src": "/iconbg.jpg", "sizes": "1024x1024", "type": "image/jpeg", "purpose": "any maskable" }
+    { "src": "/huddleicon.jpg", "sizes": "1024x1024", "type": "image/jpeg", "purpose": "any maskable" }
   ]
 }

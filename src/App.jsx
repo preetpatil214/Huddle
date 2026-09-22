@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import iconBackground from '../iconbg.jpg'
 import Brand from './components/Brand.jsx'
 import Field from './components/Field.jsx'
 import MapView from './components/MapView.jsx'
@@ -21,7 +20,7 @@ function Welcome({ onCreate, onJoin }) {
   return <main className="welcome page-shell">
     <div className="welcome__image" />
     <div className="welcome__content">
-      <img src={iconBackground} alt="Huddle" className="welcome__logo" />
+      <img src="/huddleicon.jpg" alt="Huddle" className="welcome__logo" />
       <p className="welcome__credit">Built by Preet</p>
       <h1>Stay close to the people who matter.</h1>
       <div className="welcome__actions">
