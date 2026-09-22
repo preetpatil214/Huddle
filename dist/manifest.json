@@ -1,0 +1,13 @@
+{
+  "name": "Huddle",
+  "short_name": "Huddle",
+  "description": "A private family location-sharing space.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#17181A",
+  "theme_color": "#17181A",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "src": "/iconbg.jpg", "sizes": "1024x1024", "type": "image/jpeg", "purpose": "any maskable" }
+  ]
+}
