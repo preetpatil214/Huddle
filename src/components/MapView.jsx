@@ -6,7 +6,10 @@ const center = [20, 0]
 
 function markerIcon(kind) {
   const className = `map-marker map-marker--${kind}`
-  return L.divIcon({ className: '', html: `<span class="${className}"></span>`, iconSize: [28, 28], iconAnchor: [14, 14] })
+  const html = kind === 'home'
+    ? '<svg class="home-pin" viewBox="0 0 40 48" role="img" aria-label="Home"><path d="M20 2C10.1 2 2 10.1 2 20c0 12.7 18 26 18 26s18-13.3 18-26C38 10.1 29.9 2 20 2Z" fill="#121212" stroke="#D4AF37" stroke-width="2.5"/><path d="m11 22 9-8 9 8v10H11V22Z" fill="#D4AF37"/><path d="M17 32v-7h6v7" fill="#121212"/></svg>'
+    : `<span class="${className}"></span>`
+  return L.divIcon({ className: '', html, iconSize: kind === 'home' ? [40, 48] : [28, 28], iconAnchor: kind === 'home' ? [20, 46] : [14, 14] })
 }
 
 export default function MapView({ members = {}, home, currentUserId, currentLocation, focusLocation, onSelectHome }) {

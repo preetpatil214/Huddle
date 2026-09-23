@@ -19,3 +19,4 @@ export function requestCurrentLocation(onLocation, onError) {
     { enableHighAccuracy: true, timeout: 15_000 },
   )
 }
+
